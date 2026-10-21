@@ -7,7 +7,7 @@ const ERROR_MESSAGES = {
   409: "This email is already registered.",
 };
 
-async function request(path, options = {}) {
+async function request(path, options = {}, errorMessages = {}) {
   const token = localStorage.getItem("token");
 
   const response = await fetch(`${API_URL}${path}`, {
@@ -20,7 +20,8 @@ async function request(path, options = {}) {
 
   if (!response.ok) {
     throw new Error(
-      ERROR_MESSAGES[response.status] ||
+      errorMessages[response.status] ||
+        ERROR_MESSAGES[response.status] ||
         "Something went wrong. Please try again.",
     );
   }
@@ -43,4 +44,22 @@ export function login(email, password) {
 
 export function getMe() {
   return request("/api/me");
+}
+
+export function forgotPassword(email) {
+  return request("/api/auth/forgot-password", {
+    method: "POST",
+    body: JSON.stringify({ email }),
+  });
+}
+
+export function resetPassword(email, code, newPassword) {
+  return request(
+    "/api/auth/reset-password",
+    {
+      method: "POST",
+      body: JSON.stringify({ email, code, newPassword }),
+    },
+    { 400: "Invalid or expired code. Check it, or request a new one." },
+  );
 }

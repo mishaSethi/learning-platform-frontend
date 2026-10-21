@@ -208,6 +208,19 @@ button.link:hover:not(:disabled) {
   text-align: center;
 }
 
+/* ---------- Forgot / reset password ---------- */
+.subtitle {
+  margin: -12px 0 24px;
+  color: #5b6b73;
+  line-height: 1.5;
+}
+
+.forgot-link {
+  align-self: flex-end;
+  margin-top: -6px;
+  font-size: 15px;
+}
+
 /* ---------- Phones ---------- */
 @media (max-width: 600px) {
   .welcome {

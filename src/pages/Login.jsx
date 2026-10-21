@@ -4,7 +4,12 @@ import { FiMail } from "react-icons/fi";
 import IconInput from "../components/IconInput";
 import PasswordInput from "../components/PasswordInput";
 
-export default function Login({ message, onSuccess, onGoToSignup }) {
+export default function Login({
+  message,
+  onSuccess,
+  onGoToSignup,
+  onForgotPassword,
+}) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -44,6 +49,13 @@ export default function Login({ message, onSuccess, onGoToSignup }) {
           onChange={(e) => setPassword(e.target.value)}
           required
         />
+        <button
+          type="button"
+          className="link forgot-link"
+          onClick={onForgotPassword}
+        >
+          Forgot password?
+        </button>
         {error && <p className="error">{error}</p>}
         <button type="submit" disabled={loading}>
           {loading ? "Logging in…" : "Log in"}

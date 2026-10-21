@@ -2,12 +2,15 @@ import { useCallback, useState } from 'react'
 import Welcome from './pages/Welcome'
 import Signup from './pages/Signup'
 import Login from './pages/Login'
+import ForgotPassword from './pages/ForgotPassword'
+import ResetPassword from './pages/ResetPassword'
 import Dashboard from './pages/Dashboard'
 import './App.css'
 
 function App() {
   const [page, setPage] = useState(localStorage.getItem('token') ? 'dashboard' : 'welcome')
   const [message, setMessage] = useState('')
+  const [resetEmail, setResetEmail] = useState('')
 
   const handleLogout = useCallback(() => {
     localStorage.removeItem('token')
@@ -37,6 +40,29 @@ function App() {
     )
   }
 
+  if (page === 'forgot') {
+    return (
+      <div className="page">
+        <ForgotPassword
+          onCodeSent={(email) => { setResetEmail(email); setPage('reset') }}
+          onBackToLogin={() => { setMessage(''); setPage('login') }}
+        />
+      </div>
+    )
+  }
+
+  if (page === 'reset') {
+    return (
+      <div className="page">
+        <ResetPassword
+          email={resetEmail}
+          onSuccess={() => { setMessage('Password updated! Please log in with your new password.'); setPage('login') }}
+          onBackToLogin={() => { setMessage(''); setPage('login') }}
+        />
+      </div>
+    )
+  }
+
   if (page === 'dashboard') {
     return (
       <div className="page">
@@ -51,6 +77,7 @@ function App() {
         message={message}
         onSuccess={() => setPage('dashboard')}
         onGoToSignup={() => setPage('signup')}
+        onForgotPassword={() => { setMessage(''); setPage('forgot') }}
       />
     </div>
   )
