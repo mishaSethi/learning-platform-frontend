@@ -1,0 +1,281 @@
+/* ---------- Theme colours (taken from the Himalayas photo) ---------- */
+:root {
+  --pine: #2f6b4f; /* forest green - main buttons */
+  --pine-dark: #24553f; /* button hover */
+  --snow: #ffffff;
+  --glacier: #cfe6ee; /* icy blue */
+  --mist: rgba(16, 28, 34, 0.45); /* dark see-through panel */
+  --stone: #1f2a30; /* dark text on cards */
+}
+
+/* ---------- Background (all pages) ---------- */
+.page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  box-sizing: border-box;
+  /* Lighter at the top (sky), darker at the bottom (rocks) */
+  background:
+    linear-gradient(
+      180deg,
+      rgba(10, 20, 28, 0.2) 0%,
+      rgba(10, 20, 18, 0.6) 100%
+    ),
+    url("./assets/himalayas.jpg") center / cover no-repeat;
+}
+
+/* ---------- Welcome page ---------- */
+.welcome {
+  max-width: 760px;
+  padding: 56px 48px;
+  text-align: center;
+  color: var(--snow);
+  border-radius: 24px;
+  /* Misty glass: dark see-through panel, light blur so it stays crisp */
+  background: var(--mist);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+  animation: fadeUp 0.9s ease-out;
+}
+
+.badge {
+  display: inline-block;
+  margin-bottom: 22px;
+  padding: 7px 16px;
+  border-radius: 999px;
+  background: rgba(47, 107, 79, 0.55);
+  border: 1px solid rgba(207, 230, 238, 0.4);
+  color: var(--glacier);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+}
+
+.welcome h1 {
+  margin: 0 0 18px;
+  font-size: 52px;
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: -0.5px;
+  text-shadow: 0 2px 16px rgba(0, 0, 0, 0.35);
+}
+
+/* Snow-to-glacier gradient text */
+.highlight {
+  background: linear-gradient(90deg, var(--snow), var(--glacier), #9fd3c7);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.welcome p {
+  margin: 0 auto 36px;
+  max-width: 560px;
+  font-size: 20px;
+  line-height: 1.6;
+  color: var(--glacier);
+}
+
+.welcome-buttons {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+}
+
+.welcome-buttons button {
+  padding: 16px 40px;
+  font-size: 18px;
+  border-radius: 999px;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.welcome-buttons button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ---------- Cards (signup / login / dashboard) ---------- */
+.card {
+  width: 100%;
+  max-width: 480px;
+  padding: 48px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.95);
+  color: var(--stone);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+  box-sizing: border-box;
+  animation: fadeUp 0.6s ease-out;
+}
+
+.card h1 {
+  margin: 0 0 28px;
+  font-size: 34px;
+}
+
+.card p {
+  font-size: 17px;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+input {
+  padding: 14px 16px;
+  border: 1px solid #d0d5dd;
+  border-radius: 10px;
+  font-size: 17px;
+}
+
+input:focus {
+  outline: none;
+  border-color: var(--pine);
+  box-shadow: 0 0 0 3px rgba(47, 107, 79, 0.2);
+}
+
+/* ---------- Buttons ---------- */
+button {
+  padding: 14px;
+  border: none;
+  border-radius: 10px;
+  background: var(--pine);
+  color: #ffffff;
+  font-size: 17px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+button:hover:not(:disabled) {
+  background: var(--pine-dark);
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+button.secondary {
+  background: transparent;
+  border: 2px solid rgba(255, 255, 255, 0.8);
+}
+
+button.secondary:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+button.link {
+  padding: 0;
+  background: none;
+  color: var(--pine);
+  font-weight: 600;
+  text-decoration: underline;
+}
+
+button.link:hover:not(:disabled) {
+  background: none;
+  color: var(--pine-dark);
+}
+
+.error {
+  color: #dc2626;
+  margin: 0;
+}
+.success {
+  color: #16a34a;
+}
+.switch {
+  margin-top: 20px;
+  text-align: center;
+}
+
+/* ---------- Phones ---------- */
+@media (max-width: 600px) {
+  .welcome {
+    padding: 36px 24px;
+  }
+  .welcome h1 {
+    font-size: 36px;
+  }
+  .welcome p {
+    font-size: 18px;
+  }
+  .welcome-buttons {
+    flex-direction: column;
+  }
+  .card {
+    padding: 32px 24px;
+  }
+}
+/* ---------- Inputs with icons ---------- */
+.input-group {
+  position: relative;
+  display: flex;
+}
+
+.input-group input {
+  width: 100%;
+  padding-left: 48px; /* room for the icon on the left */
+  box-sizing: border-box;
+}
+
+.input-icon {
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 20px;
+  color: #6b7c85;
+  pointer-events: none; /* clicks go through to the input */
+}
+
+/* Icon turns green when the user clicks into that box */
+.input-group:focus-within .input-icon {
+  color: var(--pine);
+}
+
+/* Eye button on the right of the password box */
+.input-group:has(.eye-button) input {
+  padding-right: 52px; /* room for the eye */
+}
+
+.eye-button {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  padding: 6px;
+  background: none;
+  color: #6b7c85;
+  font-size: 20px;
+}
+
+.eye-button:hover:not(:disabled) {
+  background: none;
+  color: var(--pine);
+}
+/* Hide Edge's built-in eye, so only our eye shows */
+input::-ms-reveal,
+input::-ms-clear {
+  display: none;
+}
