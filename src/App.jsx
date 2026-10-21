@@ -4,6 +4,7 @@ import Signup from './pages/Signup'
 import Login from './pages/Login'
 import ForgotPassword from './pages/ForgotPassword'
 import ResetPassword from './pages/ResetPassword'
+import VerifyLogin from './pages/VerifyLogin'
 import Dashboard from './pages/Dashboard'
 import './App.css'
 
@@ -11,6 +12,8 @@ function App() {
   const [page, setPage] = useState(localStorage.getItem('token') ? 'dashboard' : 'welcome')
   const [message, setMessage] = useState('')
   const [resetEmail, setResetEmail] = useState('')
+  // Kept in memory only (never saved) so "Resend code" can log in again; cleared after 2FA
+  const [loginCreds, setLoginCreds] = useState(null)
 
   const handleLogout = useCallback(() => {
     localStorage.removeItem('token')
@@ -63,6 +66,19 @@ function App() {
     )
   }
 
+  if (page === 'verify') {
+    return (
+      <div className="page">
+        <VerifyLogin
+          email={loginCreds.email}
+          password={loginCreds.password}
+          onSuccess={() => { setLoginCreds(null); setPage('dashboard') }}
+          onBackToLogin={() => { setLoginCreds(null); setMessage(''); setPage('login') }}
+        />
+      </div>
+    )
+  }
+
   if (page === 'dashboard') {
     return (
       <div className="page">
@@ -75,7 +91,7 @@ function App() {
     <div className="page">
       <Login
         message={message}
-        onSuccess={() => setPage('dashboard')}
+        onSuccess={(email, password) => { setLoginCreds({ email, password }); setPage('verify') }}
         onGoToSignup={() => setPage('signup')}
         onForgotPassword={() => { setMessage(''); setPage('forgot') }}
       />

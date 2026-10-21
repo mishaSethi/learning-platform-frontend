@@ -20,9 +20,8 @@ export default function Login({
     setError("");
     setLoading(true);
     try {
-      const data = await login(email, password);
-      localStorage.setItem("token", data.token);
-      onSuccess();
+      await login(email, password);
+      onSuccess(email, password);
     } catch (err) {
       setError(err.message);
     } finally {

@@ -63,3 +63,14 @@ export function resetPassword(email, code, newPassword) {
     { 400: "Invalid or expired code. Check it, or request a new one." },
   );
 }
+
+export function verifyTwoFactor(email, code) {
+  return request(
+    "/api/auth/verify-2fa",
+    {
+      method: "POST",
+      body: JSON.stringify({ email, code }),
+    },
+    { 401: "Invalid or expired code. Check it, or request a new one." },
+  );
+}
