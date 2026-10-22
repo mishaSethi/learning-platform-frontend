@@ -1,0 +1,628 @@
+/* ---------- Layout: menu on the left, content on the right ---------- */
+.dashboard {
+  display: flex;
+  min-height: 100vh;
+  background: #f2f5f4;
+  color: var(--stone);
+}
+
+/* Buttons don't inherit the page font by default - cards and menu items are buttons */
+.dashboard button {
+  font-family: inherit;
+}
+
+/* ---------- Left menu ---------- */
+.sidebar {
+  position: sticky;
+  top: 0;
+  display: flex;
+  flex-direction: column;
+  width: 260px;
+  height: 100vh;
+  padding: 24px 16px;
+  box-sizing: border-box;
+  flex-shrink: 0;
+  background: linear-gradient(180deg, #1f3a30 0%, #16261f 100%);
+  color: #ffffff;
+}
+
+.sidebar-brand {
+  margin: 0 8px 32px;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 10px;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 16px;
+  font-weight: 500;
+  text-align: left;
+}
+
+.nav-item svg {
+  font-size: 19px;
+  flex-shrink: 0;
+}
+
+.nav-item:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.08);
+  color: #ffffff;
+}
+
+.nav-item.active,
+.nav-item.active:hover:not(:disabled) {
+  background: var(--pine);
+  color: #ffffff;
+}
+
+.nav-item.logout {
+  margin-top: 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 0;
+  padding-top: 18px;
+}
+
+/* ---------- Right content ---------- */
+.dashboard-content {
+  flex: 1;
+  min-width: 0;
+  padding: 40px 48px;
+  animation: fadeUp 0.4s ease-out;
+}
+
+.page-title {
+  margin: 0 0 8px;
+  font-size: 32px;
+}
+
+.page-intro {
+  margin: 0 0 28px;
+  max-width: 720px;
+  color: #5b6b73;
+  font-size: 17px;
+  line-height: 1.6;
+}
+
+.section-title {
+  margin: 36px 0 16px;
+  font-size: 22px;
+}
+
+/* ---------- Overview ---------- */
+.hero {
+  padding: 48px 40px;
+  border-radius: 20px;
+  color: #ffffff;
+  background:
+    linear-gradient(90deg, rgba(16, 32, 26, 0.75) 0%, rgba(16, 32, 26, 0.2) 100%),
+    url("../assets/himalayas.jpg") center / cover no-repeat;
+}
+
+.hero h1 {
+  margin: 0 0 10px;
+  font-size: 38px;
+}
+
+.hero p {
+  margin: 0;
+  max-width: 520px;
+  font-size: 18px;
+  color: var(--glacier);
+}
+
+.facts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-top: 24px;
+}
+
+.fact {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 22px;
+  border-radius: 14px;
+  background: #ffffff;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.fact-value {
+  font-size: 30px;
+  font-weight: 700;
+  color: var(--pine);
+}
+
+.fact-label {
+  color: #5b6b73;
+  line-height: 1.4;
+}
+
+.shortcuts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 14px;
+}
+
+.shortcut {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 18px;
+  border: 1px solid #dde5e2;
+  border-radius: 14px;
+  background: #ffffff;
+  color: var(--stone);
+  font-size: 16px;
+}
+
+.shortcut svg {
+  font-size: 22px;
+  color: var(--pine);
+}
+
+.shortcut:hover:not(:disabled) {
+  background: #ffffff;
+  border-color: var(--pine);
+}
+
+/* ---------- Highest peaks table ---------- */
+.table-wrap {
+  overflow-x: auto;
+  border-radius: 14px;
+  background: #ffffff;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.peaks-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 16px;
+}
+
+.peaks-table th,
+.peaks-table td {
+  padding: 14px 18px;
+  text-align: left;
+  border-bottom: 1px solid #eef2f0;
+}
+
+.peaks-table th {
+  background: #f7faf9;
+  color: #5b6b73;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.peaks-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.peaks-table tbody tr:hover {
+  background: #f7faf9;
+}
+
+.peaks-table .num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.peak-name {
+  font-weight: 600;
+}
+
+/* ---------- Clickable cards (topics, peaks, treks, climbers) ---------- */
+.card-grid,
+.tips-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 18px;
+}
+
+.info-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 22px;
+  border: 1px solid transparent;
+  border-radius: 14px;
+  background: #ffffff;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  color: var(--stone);
+  font-size: 16px;
+  font-weight: 400;
+  text-align: left;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.info-card:hover:not(:disabled) {
+  background: #ffffff;
+  border-color: var(--pine);
+  box-shadow: 0 10px 24px rgba(31, 58, 48, 0.15);
+  transform: translateY(-3px);
+}
+
+.info-card h3 {
+  margin: 0;
+  font-size: 19px;
+}
+
+.info-badge {
+  display: inline-block;
+  margin-bottom: 12px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: #e3f0ea;
+  color: var(--pine);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.info-badge.emoji {
+  padding: 0;
+  background: none;
+  font-size: 34px;
+  line-height: 1;
+}
+
+.info-subtitle {
+  margin: 6px 0 0;
+  color: #5b6b73;
+  font-size: 15px;
+}
+
+.info-text {
+  margin: 12px 0 0;
+  line-height: 1.5;
+}
+
+.read-more {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--pine);
+  font-size: 15px;
+  font-weight: 600;
+}
+
+/* ---------- Detailed view (opened card) ---------- */
+.detail {
+  max-width: 860px;
+}
+
+.back-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 20px;
+  padding: 8px 14px;
+  border: 1px solid #dde5e2;
+  background: #ffffff;
+  color: var(--stone);
+  font-size: 15px;
+}
+
+.back-button:hover:not(:disabled) {
+  background: #ffffff;
+  border-color: var(--pine);
+  color: var(--pine);
+}
+
+.detail-hero {
+  padding: 40px 36px;
+  border-radius: 20px;
+  color: #ffffff;
+  background:
+    linear-gradient(90deg, rgba(16, 32, 26, 0.85) 0%, rgba(16, 32, 26, 0.35) 100%),
+    url("../assets/himalayas.jpg") center / cover no-repeat;
+}
+
+.detail-kicker {
+  display: inline-block;
+  margin-bottom: 10px;
+  color: var(--glacier);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.detail-hero h1 {
+  margin: 0 0 10px;
+  font-size: 38px;
+  line-height: 1.15;
+}
+
+.detail-hero p {
+  margin: 0;
+  max-width: 620px;
+  font-size: 18px;
+  line-height: 1.5;
+  color: var(--glacier);
+}
+
+.detail-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 14px;
+  margin: 20px 0 0;
+}
+
+.detail-stat {
+  padding: 16px 18px;
+  border-radius: 12px;
+  background: #ffffff;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.detail-stat dt {
+  margin-bottom: 4px;
+  color: #5b6b73;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.detail-stat dd {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 600;
+}
+
+.detail-body {
+  margin-top: 28px;
+  font-size: 18px;
+  line-height: 1.75;
+}
+
+.detail-body p {
+  margin: 0 0 18px;
+}
+
+.detail-highlights {
+  margin-top: 12px;
+  padding: 22px 26px;
+  border-left: 4px solid var(--pine);
+  border-radius: 12px;
+  background: #ffffff;
+}
+
+.detail-highlights h2 {
+  margin: 0 0 10px;
+  font-size: 20px;
+}
+
+.detail-highlights ul {
+  margin: 0;
+  padding-left: 20px;
+  line-height: 1.7;
+  font-size: 17px;
+}
+
+/* ---------- Tip cards ---------- */
+.tip-card {
+  padding: 22px;
+  border-radius: 14px;
+  background: #ffffff;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+/* ---------- Trek card extras ---------- */
+
+.trek-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.trek-header h3,
+.tip-card h3 {
+  margin: 0;
+  font-size: 19px;
+}
+
+.difficulty {
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.difficulty.easy     { background: #e3f4ea; color: #1e6b45; }
+.difficulty.moderate { background: #fdf1d8; color: #8a5a00; }
+.difficulty.hard     { background: #fde4e1; color: #a2321f; }
+
+.trek-region {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 6px 0 12px;
+  color: #5b6b73;
+  font-size: 15px;
+}
+
+.trek-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 16px 0 0;
+  padding: 14px 0 0;
+  border-top: 1px solid #eef2f0;
+  list-style: none;
+  font-size: 15px;
+}
+
+.trek-stats li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.trek-stats svg {
+  color: var(--pine);
+}
+
+/* ---------- Tips ---------- */
+.tip-card h3 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.tip-card h3 svg {
+  color: #c2410c;
+}
+
+.tip-card ul {
+  margin: 0;
+  padding-left: 20px;
+  line-height: 1.6;
+}
+
+.tip-card li + li {
+  margin-top: 8px;
+}
+
+/* ---------- Profile ---------- */
+.profile-card {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  max-width: 560px;
+  padding: 28px;
+  border-radius: 14px;
+  background: #ffffff;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 80px;
+  height: 80px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: var(--pine);
+  color: #ffffff;
+  font-size: 34px;
+  font-weight: 700;
+}
+
+.profile-card dl {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 10px 20px;
+  margin: 0;
+  font-size: 17px;
+}
+
+.profile-card dt {
+  color: #5b6b73;
+}
+
+.profile-card dd {
+  margin: 0;
+  font-weight: 600;
+  word-break: break-word;
+}
+
+/* ---------- Tablets & phones: menu moves to the top ---------- */
+@media (max-width: 800px) {
+  .dashboard {
+    flex-direction: column;
+  }
+
+  /* Brand + log out on the first row, scrollable menu underneath */
+  .sidebar {
+    z-index: 10;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    grid-template-areas:
+      "brand logout"
+      "nav   nav";
+    align-items: center;
+    width: 100%;
+    height: auto;
+    padding: 14px 16px;
+  }
+
+  .sidebar-brand {
+    grid-area: brand;
+    margin: 0;
+    font-size: 18px;
+  }
+
+  .sidebar-nav {
+    grid-area: nav;
+    flex-direction: row;
+    margin-top: 12px;
+    overflow-x: auto;
+  }
+
+  .nav-item {
+    width: auto;
+    white-space: nowrap;
+    padding: 10px 12px;
+    font-size: 15px;
+  }
+
+  .nav-item.logout {
+    grid-area: logout;
+    margin: 0;
+    padding: 8px 10px;
+    border-top: none;
+    border-radius: 10px;
+  }
+
+  .dashboard-content {
+    padding: 24px 16px;
+  }
+
+  .hero {
+    padding: 32px 22px;
+  }
+
+  .hero h1 {
+    font-size: 28px;
+  }
+
+  .detail-hero {
+    padding: 28px 20px;
+  }
+
+  .detail-hero h1 {
+    font-size: 28px;
+  }
+
+  .detail-body {
+    font-size: 17px;
+  }
+
+  .profile-card {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

@@ -80,11 +80,8 @@ function App() {
   }
 
   if (page === 'dashboard') {
-    return (
-      <div className="page">
-        <Dashboard onLogout={handleLogout} />
-      </div>
-    )
+    // Full-screen layout with its own menu, so no centred .page wrapper
+    return <Dashboard onLogout={handleLogout} />
   }
 
   return (
