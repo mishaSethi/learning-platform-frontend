@@ -2,6 +2,7 @@ import { useState } from "react";
 import { FiHash } from "react-icons/fi";
 import { forgotPassword, resetPassword } from "../api";
 import IconInput from "../components/IconInput";
+import SlowServerHint from "../components/SlowServerHint";
 import PasswordInput from "../components/PasswordInput";
 
 export default function ResetPassword({ email, onSuccess, onBackToLogin }) {
@@ -66,6 +67,7 @@ export default function ResetPassword({ email, onSuccess, onBackToLogin }) {
           required
         />
         {error && <p className="error">{error}</p>}
+        <SlowServerHint loading={loading} />
         {info && <p className="success">{info}</p>}
         <button type="submit" disabled={loading}>
           {loading ? "Saving…" : "Reset password"}

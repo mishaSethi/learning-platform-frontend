@@ -208,6 +208,17 @@ button.link:hover:not(:disabled) {
   text-align: center;
 }
 
+/* "Waking up the server" note shown when a request is slow */
+.slow-hint {
+  margin: 0;
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: #fdf6e3;
+  color: #7a5a00;
+  font-size: 15px;
+  line-height: 1.4;
+}
+
 /* ---------- Forgot / reset password ---------- */
 .subtitle {
   margin: -12px 0 24px;

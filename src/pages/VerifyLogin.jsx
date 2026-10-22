@@ -2,6 +2,7 @@ import { useState } from "react";
 import { FiShield } from "react-icons/fi";
 import { login, verifyTwoFactor } from "../api";
 import IconInput from "../components/IconInput";
+import SlowServerHint from "../components/SlowServerHint";
 
 export default function VerifyLogin({
   email,
@@ -63,6 +64,7 @@ export default function VerifyLogin({
           required
         />
         {error && <p className="error">{error}</p>}
+        <SlowServerHint loading={loading} />
         {info && <p className="success">{info}</p>}
         <button type="submit" disabled={loading}>
           {loading ? "Verifying…" : "Verify and log in"}

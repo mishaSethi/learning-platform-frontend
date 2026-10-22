@@ -2,6 +2,7 @@ import { useState } from "react";
 import { FiMail } from "react-icons/fi";
 import { forgotPassword } from "../api";
 import IconInput from "../components/IconInput";
+import SlowServerHint from "../components/SlowServerHint";
 
 export default function ForgotPassword({ onCodeSent, onBackToLogin }) {
   const [email, setEmail] = useState("");
@@ -39,6 +40,7 @@ export default function ForgotPassword({ onCodeSent, onBackToLogin }) {
           required
         />
         {error && <p className="error">{error}</p>}
+        <SlowServerHint loading={loading} />
         <button type="submit" disabled={loading}>
           {loading ? "Sending…" : "Send code"}
         </button>

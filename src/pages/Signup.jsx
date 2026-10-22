@@ -2,6 +2,7 @@ import { useState } from "react";
 import { signup } from "../api";
 import { FiUser, FiMail, FiPhone } from "react-icons/fi";
 import IconInput from "../components/IconInput";
+import SlowServerHint from "../components/SlowServerHint";
 import PasswordInput from "../components/PasswordInput";
 
 export default function Signup({ onSuccess, onGoToLogin }) {
@@ -71,6 +72,7 @@ export default function Signup({ onSuccess, onGoToLogin }) {
         />
 
         {error && <p className="error">{error}</p>}
+        <SlowServerHint loading={loading} />
         <button type="submit" disabled={loading}>
           {loading ? "Creating…" : "Sign up"}
         </button>
