@@ -74,3 +74,22 @@ export function verifyTwoFactor(email, code) {
     { 401: "Invalid or expired code. Check it, or request a new one." },
   );
 }
+
+export function getQuizQuestions() {
+  return request("/api/quiz/questions");
+}
+
+export function submitQuiz(answers) {
+  return request("/api/quiz/submit", {
+    method: "POST",
+    body: JSON.stringify({ answers }),
+  });
+}
+
+export function getQuizAttempts() {
+  return request("/api/quiz/attempts");
+}
+
+export function getQuizLeaderboard() {
+  return request("/api/quiz/leaderboard");
+}

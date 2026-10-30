@@ -8,6 +8,7 @@ import {
   FiChevronRight,
   FiClock,
   FiCompass,
+  FiHelpCircle,
   FiHome,
   FiLogOut,
   FiMap,
@@ -24,6 +25,7 @@ import {
   QUICK_FACTS,
   TREKKING_TIPS,
 } from "../data/mountains";
+import Quiz from "./Quiz";
 import "./Dashboard.css";
 
 const SECTIONS = [
@@ -32,6 +34,7 @@ const SECTIONS = [
   { id: "peaks", label: "Highest Peaks", icon: FiTrendingUp },
   { id: "treks", label: "Popular Treks", icon: FiMap },
   { id: "climbers", label: "Legendary Climbers", icon: FiAward },
+  { id: "quiz", label: "Himalaya Quiz", icon: FiHelpCircle },
   { id: "tips", label: "Trekking Tips", icon: FiCompass },
   { id: "profile", label: "My Profile", icon: FiUser },
 ];
@@ -105,11 +108,14 @@ export default function Dashboard({ onLogout }) {
           />
         ) : (
           <>
-            {section === "overview" && <Overview user={user} onOpen={openSection} />}
+            {section === "overview" && (
+              <Overview user={user} onOpen={openSection} />
+            )}
             {section === "himalayas" && <Himalayas onOpen={openDetail} />}
             {section === "peaks" && <Peaks onOpen={openDetail} />}
             {section === "treks" && <Treks onOpen={openDetail} />}
             {section === "climbers" && <Climbers onOpen={openDetail} />}
+            {section === "quiz" && <Quiz />}
             {section === "tips" && <Tips />}
             {section === "profile" && <Profile user={user} />}
           </>
@@ -198,7 +204,10 @@ function Overview({ user, onOpen }) {
     <>
       <section className="hero">
         <h1>Welcome, {user.name}! 👋</h1>
-        <p>Explore the world's highest mountains and plan your next Himalayan trek.</p>
+        <p>
+          Explore the world's highest mountains and plan your next Himalayan
+          trek.
+        </p>
       </section>
 
       <div className="facts">
@@ -212,12 +221,19 @@ function Overview({ user, onOpen }) {
 
       <h2 className="section-title">Where to next?</h2>
       <div className="shortcuts">
-        {SECTIONS.filter((s) => s.id !== "overview").map(({ id, label, icon: Icon }) => (
-          <button key={id} type="button" className="shortcut" onClick={() => onOpen(id)}>
-            <Icon />
-            <span>{label}</span>
-          </button>
-        ))}
+        {SECTIONS.filter((s) => s.id !== "overview").map(
+          ({ id, label, icon: Icon }) => (
+            <button
+              key={id}
+              type="button"
+              className="shortcut"
+              onClick={() => onOpen(id)}
+            >
+              <Icon />
+              <span>{label}</span>
+            </button>
+          ),
+        )}
       </div>
     </>
   );
@@ -276,7 +292,10 @@ function Peaks({ onOpen }) {
                 title: peak.name,
                 subtitle: peak.location,
                 stats: [
-                  { label: "Height", value: `${peak.height.toLocaleString("en-IN")} m` },
+                  {
+                    label: "Height",
+                    value: `${peak.height.toLocaleString("en-IN")} m`,
+                  },
                   { label: "Range", value: peak.range },
                   { label: "Location", value: peak.location },
                   { label: "First ascent", value: peak.firstAscent },
@@ -323,7 +342,9 @@ function Treks({ onOpen }) {
             <div className="info-card-top">
               <div className="trek-header">
                 <h3>{trek.name}</h3>
-                <span className={`difficulty ${difficultyClass(trek.difficulty)}`}>
+                <span
+                  className={`difficulty ${difficultyClass(trek.difficulty)}`}
+                >
                   {trek.difficulty}
                 </span>
               </div>
@@ -397,12 +418,16 @@ function Climbers({ onOpen }) {
 function Tips() {
   return (
     <>
-      <SectionHeader title="Trekking Tips" intro="The basics to stay safe and enjoy the mountains." />
+      <SectionHeader
+        title="Trekking Tips"
+        intro="The basics to stay safe and enjoy the mountains."
+      />
       <div className="tips-grid">
         {TREKKING_TIPS.map((tip) => (
           <article key={tip.title} className="tip-card">
             <h3>
-              {tip.title === "Altitude sickness" && <FiAlertTriangle />} {tip.title}
+              {tip.title === "Altitude sickness" && <FiAlertTriangle />}{" "}
+              {tip.title}
             </h3>
             <ul>
               {tip.points.map((point) => (
