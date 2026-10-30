@@ -4,6 +4,8 @@ import { forgotPassword, resetPassword } from "../api";
 import IconInput from "../components/IconInput";
 import SlowServerHint from "../components/SlowServerHint";
 import PasswordInput from "../components/PasswordInput";
+import PasswordStrength from "../components/PasswordStrength";
+import { isStrongPassword } from "../utils/password";
 
 export default function ResetPassword({ email, onSuccess, onBackToLogin }) {
   const [code, setCode] = useState("");
@@ -15,6 +17,13 @@ export default function ResetPassword({ email, onSuccess, onBackToLogin }) {
   async function handleSubmit(e) {
     e.preventDefault();
     setError("");
+    if (!isStrongPassword(newPassword)) {
+      setError(
+        "Please choose a stronger password - see the checklist below the password box.",
+      );
+      return;
+    }
+
     setInfo("");
     setLoading(true);
     try {
@@ -59,13 +68,14 @@ export default function ResetPassword({ email, onSuccess, onBackToLogin }) {
           required
         />
         <PasswordInput
-          placeholder="New password (min 6 characters)"
-          minLength={6}
+          placeholder="New strong password"
+          maxLength={64}
           autoComplete="new-password"
           value={newPassword}
           onChange={(e) => setNewPassword(e.target.value)}
           required
         />
+        <PasswordStrength password={newPassword} />
         {error && <p className="error">{error}</p>}
         <SlowServerHint loading={loading} />
         {info && <p className="success">{info}</p>}

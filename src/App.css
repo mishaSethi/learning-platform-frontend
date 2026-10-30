@@ -303,3 +303,68 @@ input::-ms-reveal,
 input::-ms-clear {
   display: none;
 }
+
+/* ---------- Password strength ---------- */
+.password-strength {
+  margin-top: -6px;
+}
+
+.strength-bar {
+  height: 6px;
+  border-radius: 999px;
+  background: #eef2f0;
+  overflow: hidden;
+}
+
+.strength-bar div {
+  height: 100%;
+  transition: width 0.2s ease;
+}
+
+.strength-bar .weak {
+  background: #d64545;
+}
+.strength-bar .medium {
+  background: #e0a100;
+}
+.strength-bar .strong {
+  background: #2f9e62;
+}
+
+.strength-label {
+  display: block;
+  margin: 4px 0 6px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.strength-label.weak {
+  color: #d64545;
+}
+.strength-label.medium {
+  color: #a77700;
+}
+.strength-label.strong {
+  color: #2f9e62;
+}
+
+.strength-rules {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2px 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 14px;
+  color: #8a969c;
+}
+
+.strength-rules li {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.strength-rules li.ok {
+  color: #2f9e62;
+}

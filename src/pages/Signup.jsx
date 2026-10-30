@@ -4,6 +4,8 @@ import { FiUser, FiMail, FiPhone } from "react-icons/fi";
 import IconInput from "../components/IconInput";
 import SlowServerHint from "../components/SlowServerHint";
 import PasswordInput from "../components/PasswordInput";
+import PasswordStrength from "../components/PasswordStrength";
+import { isStrongPassword } from "../utils/password";
 
 export default function Signup({ onSuccess, onGoToLogin }) {
   const [form, setForm] = useState({
@@ -22,6 +24,13 @@ export default function Signup({ onSuccess, onGoToLogin }) {
   async function handleSubmit(e) {
     e.preventDefault();
     setError("");
+    if (!isStrongPassword(form.password)) {
+      setError(
+        "Please choose a stronger password - see the checklist below the password box.",
+      );
+      return;
+    }
+
     setLoading(true);
     try {
       await signup(form.name, form.email, form.password, form.phone);
@@ -56,12 +65,13 @@ export default function Signup({ onSuccess, onGoToLogin }) {
         />
         <PasswordInput
           name="password"
-          placeholder="Password (min 6 characters)"
-          minLength={6}
+          placeholder="Create a strong password"
+          maxLength={64}
           value={form.password}
           onChange={handleChange}
           required
         />
+        <PasswordStrength password={form.password} />
         <IconInput
           icon={FiPhone}
           name="phone"
