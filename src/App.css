@@ -6,6 +6,8 @@
   --glacier: #cfe6ee; /* icy blue */
   --mist: rgba(16, 28, 34, 0.45); /* dark see-through panel */
   --stone: #1f2a30; /* dark text on cards */
+  --sunrise: #f4a340; /* warm accent for booking buttons */
+  --sunrise-dark: #e58e24;
 }
 
 /* ---------- Background (all pages) ---------- */

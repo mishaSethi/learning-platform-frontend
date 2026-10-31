@@ -15,8 +15,10 @@ import {
   FiMapPin,
   FiTrendingUp,
   FiUser,
+  FiX,
 } from "react-icons/fi";
 import { getAvatarUrl, getMe } from "../api";
+import posterImg from "../assets/everest-trek-poster.jpg";
 import Avatar from "../components/Avatar";
 import {
   CLIMBERS,
@@ -26,6 +28,7 @@ import {
   QUICK_FACTS,
   TREKKING_TIPS,
 } from "../data/mountains";
+import { PEAK_PHOTOS, TRAIL_PHOTOS, TREK_PHOTOS } from "../data/photos";
 import Profile from "./Profile";
 import Quiz from "./Quiz";
 import "./Dashboard.css";
@@ -41,6 +44,15 @@ const SECTIONS = [
   { id: "profile", label: "My Profile", icon: FiUser },
 ];
 
+// Treks shown on the overview page, one for each level of difficulty
+const FEATURED_TREKS = ["Everest Base Camp", "Valley of Flowers", "Kedarkantha"];
+
+// Background of the "Book your trek" banner at the bottom of the overview
+const CTA_PHOTO = PEAK_PHOTOS["Kangchenjunga"];
+
+// Same looping clip as the login page (see AuthLayout.jsx for the licence note)
+const VIDEO_SRC = "/videos/everest-trek.webm";
+
 export default function Dashboard({ onLogout }) {
   const [user, setUser] = useState(null);
   const [section, setSection] = useState("overview");
@@ -48,6 +60,8 @@ export default function Dashboard({ onLogout }) {
   const [detail, setDetail] = useState(null);
   // Temporary address of the profile photo, or null to show the initial
   const [avatarUrl, setAvatarUrl] = useState(null);
+  // The "bookings open soon" popup: null when closed, otherwise { trek } (trek may be null)
+  const [booking, setBooking] = useState(null);
 
   useEffect(() => {
     getMe()
@@ -80,6 +94,8 @@ export default function Dashboard({ onLogout }) {
     setDetail(item);
     window.scrollTo(0, 0);
   }
+
+  const openBooking = (trek) => setBooking({ trek });
 
   if (!user) {
     return (
@@ -136,15 +152,26 @@ export default function Dashboard({ onLogout }) {
             item={detail}
             backLabel={sectionLabel}
             onBack={() => openDetail(null)}
+            onBook={openBooking}
           />
         ) : (
           <>
             {section === "overview" && (
-              <Overview user={user} onOpen={openSection} />
+              <Overview
+                user={user}
+                onOpen={openSection}
+                onOpenTrek={(trek) => openDetail(trekDetail(trek))}
+                onBook={openBooking}
+              />
             )}
             {section === "himalayas" && <Himalayas onOpen={openDetail} />}
             {section === "peaks" && <Peaks onOpen={openDetail} />}
-            {section === "treks" && <Treks onOpen={openDetail} />}
+            {section === "treks" && (
+              <Treks
+                onOpenTrek={(trek) => openDetail(trekDetail(trek))}
+                onBook={openBooking}
+              />
+            )}
             {section === "climbers" && <Climbers onOpen={openDetail} />}
             {section === "quiz" && <Quiz />}
             {section === "tips" && <Tips />}
@@ -159,15 +186,70 @@ export default function Dashboard({ onLogout }) {
           </>
         )}
       </main>
+
+      {booking && (
+        <BookingSoon
+          trek={booking.trek}
+          onClose={() => setBooking(null)}
+          onBrowse={() => {
+            setBooking(null);
+            openSection("treks");
+          }}
+        />
+      )}
     </div>
   );
 }
 
 /* ---------- Shared building blocks ---------- */
 
-function InfoCard({ badge, badgeClass = "", title, subtitle, text, onClick }) {
+// Author and licence of a photo - the free licences require it next to the picture.
+// Inside a card (a button) links aren't allowed, so the card shows plain text.
+function PhotoCredit({ credit, label = "Photo", links = true }) {
+  const licence =
+    links && credit.licenseUrl ? (
+      <a href={credit.licenseUrl} target="_blank" rel="noreferrer">
+        {credit.license}
+      </a>
+    ) : (
+      credit.license
+    );
   return (
-    <button type="button" className="info-card" onClick={onClick}>
+    <small className="media-credit">
+      {label}:{" "}
+      {links ? (
+        <a href={credit.page} target="_blank" rel="noreferrer">
+          {credit.artist}
+        </a>
+      ) : (
+        credit.artist
+      )}
+      , {licence}
+    </small>
+  );
+}
+
+function InfoCard({
+  badge,
+  badgeClass = "",
+  title,
+  subtitle,
+  text,
+  photo,
+  onClick,
+}) {
+  return (
+    <button
+      type="button"
+      className={`info-card ${photo ? "has-photo" : ""}`}
+      onClick={onClick}
+    >
+      {photo && (
+        <div className="card-photo">
+          <img src={photo.src} alt={photo.alt} loading="lazy" />
+          <PhotoCredit credit={photo.credit} links={false} />
+        </div>
+      )}
       <div className="info-card-top">
         {badge && <span className={`info-badge ${badgeClass}`}>{badge}</span>}
         <h3>{title}</h3>
@@ -181,18 +263,35 @@ function InfoCard({ badge, badgeClass = "", title, subtitle, text, onClick }) {
   );
 }
 
-// item: { kicker, title, subtitle, stats: [{label, value}], paragraphs: [], highlights: [] }
-function DetailView({ item, backLabel, onBack }) {
+// item: { kicker, title, subtitle, photo, bookable, stats: [{label, value}], paragraphs: [], highlights: [] }
+function DetailView({ item, backLabel, onBack, onBook }) {
   return (
     <article className="detail">
       <button type="button" className="back-button" onClick={onBack}>
         <FiArrowLeft /> Back to {backLabel}
       </button>
 
-      <header className="detail-hero">
+      <header
+        className={`detail-hero ${item.photo ? "has-photo" : ""}`}
+        style={
+          item.photo
+            ? { "--hero-photo": `url("${item.photo.src}")` }
+            : undefined
+        }
+      >
         {item.kicker && <span className="detail-kicker">{item.kicker}</span>}
         <h1>{item.title}</h1>
         {item.subtitle && <p>{item.subtitle}</p>}
+        {item.bookable && (
+          <button
+            type="button"
+            className="hero-primary"
+            onClick={() => onBook(item.title)}
+          >
+            Book this trek <FiChevronRight />
+          </button>
+        )}
+        {item.photo && <PhotoCredit credit={item.photo.credit} />}
       </header>
 
       {item.stats?.length > 0 && (
@@ -222,6 +321,140 @@ function DetailView({ item, backLabel, onBack }) {
           </ul>
         </section>
       )}
+
+      {item.bookable && (
+        <section className="detail-book">
+          <div>
+            <h2>Ready to walk the {item.title} trail?</h2>
+            <p>Reserve your spot and we&apos;ll help you plan the rest.</p>
+          </div>
+          <button type="button" onClick={() => onBook(item.title)}>
+            Book this trek
+          </button>
+        </section>
+      )}
+    </article>
+  );
+}
+
+// Online booking isn't built yet - this popup says so instead of a dead button
+function BookingSoon({ trek, onClose, onBrowse }) {
+  useEffect(() => {
+    const closeOnEscape = (e) => e.key === "Escape" && onClose();
+    window.addEventListener("keydown", closeOnEscape);
+    return () => window.removeEventListener("keydown", closeOnEscape);
+  }, [onClose]);
+
+  return (
+    <div className="modal-backdrop" onClick={onClose}>
+      <div
+        className="modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="booking-title"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <button
+          type="button"
+          className="modal-close"
+          aria-label="Close"
+          onClick={onClose}
+          autoFocus
+        >
+          <FiX />
+        </button>
+        <span className="modal-icon" aria-hidden="true">
+          🏔️
+        </span>
+        <h2 id="booking-title">Bookings open soon</h2>
+        <p>
+          {trek ? (
+            <>
+              We&apos;re getting online booking ready for{" "}
+              <strong>{trek}</strong>.
+            </>
+          ) : (
+            <>We&apos;re getting online trek booking ready.</>
+          )}{" "}
+          Until then, explore the routes, best seasons and trekking tips so
+          you&apos;re ready to go.
+        </p>
+        <div className="modal-actions">
+          {trek ? (
+            <button type="button" onClick={onClose}>
+              Got it
+            </button>
+          ) : (
+            <button type="button" onClick={onBrowse}>
+              Browse treks
+            </button>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// Everything the detail page needs to show one trek
+function trekDetail(trek) {
+  return {
+    kicker: `${trek.difficulty} trek · ${trek.region}`,
+    title: trek.name,
+    subtitle: trek.description,
+    photo: TREK_PHOTOS[trek.name],
+    bookable: true,
+    stats: [
+      { label: "Max altitude", value: trek.maxAltitude },
+      { label: "Duration", value: trek.duration },
+      { label: "Difficulty", value: trek.difficulty },
+      { label: "Best season", value: trek.bestSeason },
+    ],
+    paragraphs: trek.paragraphs,
+    highlights: trek.highlights,
+  };
+}
+
+function TrekCard({ trek, onOpen, onBook }) {
+  const photo = TREK_PHOTOS[trek.name];
+  return (
+    <article className="trek-card">
+      <div className="card-photo">
+        <img src={photo.src} alt={photo.alt} loading="lazy" />
+        <span className={`difficulty ${difficultyClass(trek.difficulty)}`}>
+          {trek.difficulty}
+        </span>
+        <PhotoCredit credit={photo.credit} />
+      </div>
+      <div className="trek-card-body">
+        <h3>{trek.name}</h3>
+        <p className="trek-region">
+          <FiMapPin /> {trek.region}
+        </p>
+        <p className="info-text">{trek.description}</p>
+        <ul className="trek-stats">
+          <li>
+            <FiTrendingUp /> {trek.maxAltitude}
+          </li>
+          <li>
+            <FiClock /> {trek.duration}
+          </li>
+          <li>
+            <FiCalendar /> {trek.bestSeason}
+          </li>
+        </ul>
+        <div className="trek-actions">
+          <button
+            type="button"
+            className="secondary-button"
+            onClick={() => onOpen(trek)}
+          >
+            View details
+          </button>
+          <button type="button" onClick={() => onBook(trek.name)}>
+            Book this trek
+          </button>
+        </div>
+      </div>
     </article>
   );
 }
@@ -237,15 +470,77 @@ function SectionHeader({ title, intro }) {
 
 /* ---------- Sections ---------- */
 
-function Overview({ user, onOpen }) {
+function Overview({ user, onOpen, onOpenTrek, onBook }) {
+  // People who ask their device for less motion get the still photo instead
+  const [reduceMotion] = useState(
+    () => window.matchMedia("(prefers-reduced-motion: reduce)").matches,
+  );
+  const firstName = user.name.split(" ")[0];
+  const featured = FEATURED_TREKS.map((name) =>
+    POPULAR_TREKS.find((trek) => trek.name === name),
+  );
+
   return (
     <>
-      <section className="hero">
-        <h1>Welcome, {user.name}! 👋</h1>
-        <p>
-          Explore the world's highest mountains and plan your next Himalayan
-          trek.
-        </p>
+      <section className="hero-video">
+        {reduceMotion ? (
+          <img className="hero-video-media" src={posterImg} alt="" />
+        ) : (
+          <video
+            className="hero-video-media"
+            src={VIDEO_SRC}
+            poster={posterImg}
+            autoPlay
+            muted
+            loop
+            playsInline
+            aria-hidden="true"
+          />
+        )}
+        <div className="hero-video-content">
+          <span className="hero-kicker">Namaste, {firstName} 🙏</span>
+          <h1>Your Himalayan adventure starts here</h1>
+          <p>
+            Walk through Sherpa villages, cross prayer-flag passes and wake up
+            below the highest peaks on Earth.
+          </p>
+          <div className="hero-actions">
+            <button
+              type="button"
+              className="hero-primary"
+              onClick={() => onOpen("treks")}
+            >
+              <FiMap /> Explore treks
+            </button>
+            <button
+              type="button"
+              className="hero-ghost"
+              onClick={() => onBook(null)}
+            >
+              Book a trek
+            </button>
+          </div>
+        </div>
+        {!reduceMotion && (
+          <small className="media-credit">
+            Video:{" "}
+            <a
+              href="https://commons.wikimedia.org/wiki/File:The_Himalayan_-_Mount_Everest_Base_Camp_trek_HD_Time_Lapse.webm"
+              target="_blank"
+              rel="noreferrer"
+            >
+              Amit Haware
+            </a>{" "}
+            (edited),{" "}
+            <a
+              href="https://creativecommons.org/licenses/by/3.0/"
+              target="_blank"
+              rel="noreferrer"
+            >
+              CC BY 3.0
+            </a>
+          </small>
+        )}
       </section>
 
       <div className="facts">
@@ -254,6 +549,34 @@ function Overview({ user, onOpen }) {
             <span className="fact-value">{fact.value}</span>
             <span className="fact-label">{fact.label}</span>
           </div>
+        ))}
+      </div>
+
+      <div className="section-head">
+        <h2 className="section-title">Featured treks</h2>
+        <button type="button" className="link" onClick={() => onOpen("treks")}>
+          See all {POPULAR_TREKS.length} treks
+        </button>
+      </div>
+      <div className="card-grid">
+        {featured.map((trek) => (
+          <TrekCard
+            key={trek.name}
+            trek={trek}
+            onOpen={onOpenTrek}
+            onBook={onBook}
+          />
+        ))}
+      </div>
+
+      <h2 className="section-title">Life on the trail</h2>
+      <div className="gallery">
+        {TRAIL_PHOTOS.map((photo) => (
+          <figure key={photo.src} className="gallery-item">
+            <img src={photo.src} alt={photo.alt} loading="lazy" />
+            <figcaption>{photo.caption}</figcaption>
+            <PhotoCredit credit={photo.credit} />
+          </figure>
         ))}
       </div>
 
@@ -273,6 +596,27 @@ function Overview({ user, onOpen }) {
           ),
         )}
       </div>
+
+      <section
+        className="cta-banner"
+        style={{ "--hero-photo": `url("${CTA_PHOTO.src}")` }}
+      >
+        <div>
+          <h2>The mountains are calling</h2>
+          <p>
+            Pick your trek, choose your season and start counting down to
+            sunrise over the Himalayas.
+          </p>
+        </div>
+        <button
+          type="button"
+          className="hero-primary"
+          onClick={() => onBook(null)}
+        >
+          Book your trek <FiChevronRight />
+        </button>
+        <PhotoCredit credit={CTA_PHOTO.credit} />
+      </section>
     </>
   );
 }
@@ -324,11 +668,13 @@ function Peaks({ onOpen }) {
             title={peak.name}
             subtitle={`${peak.height.toLocaleString("en-IN")} m · ${peak.location}`}
             text={`First climbed ${peak.firstAscent}`}
+            photo={PEAK_PHOTOS[peak.name]}
             onClick={() =>
               onOpen({
                 kicker: `#${peak.rank} highest mountain on Earth`,
                 title: peak.name,
                 subtitle: peak.location,
+                photo: PEAK_PHOTOS[peak.name],
                 stats: [
                   {
                     label: "Height",
@@ -348,7 +694,7 @@ function Peaks({ onOpen }) {
   );
 }
 
-function Treks({ onOpen }) {
+function Treks({ onOpenTrek, onBook }) {
   return (
     <>
       <SectionHeader
@@ -357,55 +703,12 @@ function Treks({ onOpen }) {
       />
       <div className="card-grid">
         {POPULAR_TREKS.map((trek) => (
-          <button
+          <TrekCard
             key={trek.name}
-            type="button"
-            className="info-card trek-card"
-            onClick={() =>
-              onOpen({
-                kicker: `${trek.difficulty} trek · ${trek.region}`,
-                title: trek.name,
-                subtitle: trek.description,
-                stats: [
-                  { label: "Max altitude", value: trek.maxAltitude },
-                  { label: "Duration", value: trek.duration },
-                  { label: "Difficulty", value: trek.difficulty },
-                  { label: "Best season", value: trek.bestSeason },
-                ],
-                paragraphs: trek.paragraphs,
-                highlights: trek.highlights,
-              })
-            }
-          >
-            <div className="info-card-top">
-              <div className="trek-header">
-                <h3>{trek.name}</h3>
-                <span
-                  className={`difficulty ${difficultyClass(trek.difficulty)}`}
-                >
-                  {trek.difficulty}
-                </span>
-              </div>
-              <p className="trek-region">
-                <FiMapPin /> {trek.region}
-              </p>
-              <p className="info-text">{trek.description}</p>
-              <ul className="trek-stats">
-                <li>
-                  <FiTrendingUp /> {trek.maxAltitude}
-                </li>
-                <li>
-                  <FiClock /> {trek.duration}
-                </li>
-                <li>
-                  <FiCalendar /> {trek.bestSeason}
-                </li>
-              </ul>
-            </div>
-            <span className="read-more">
-              Read more <FiChevronRight />
-            </span>
-          </button>
+            trek={trek}
+            onOpen={onOpenTrek}
+            onBook={onBook}
+          />
         ))}
       </div>
     </>
