@@ -96,7 +96,7 @@ export default function Dashboard({ onLogout }) {
   return (
     <div className="dashboard">
       <aside className="sidebar">
-        <div className="sidebar-brand">🏔️ Learning Platform</div>
+        <div className="sidebar-brand">🏔️ Himalayan &amp; Skies</div>
 
         <button
           type="button"

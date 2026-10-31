@@ -3,7 +3,7 @@ export default function Welcome({ onGetStarted, onLogin }) {
     <div className="welcome">
       <span className="badge">🏔️ Start your journey</span>
       <h1>
-        Welcome to the <span className="highlight">Learning Platform</span>
+        Welcome to <span className="highlight">Himalayan &amp; Skies</span>
       </h1>
       <p>
         Learn something new every day — one step at a time, like climbing a

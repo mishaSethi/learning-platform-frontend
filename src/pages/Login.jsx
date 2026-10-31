@@ -32,7 +32,8 @@ export default function Login({
 
   return (
     <div className="card">
-      <h1>Log in</h1>
+      <h1>Welcome back</h1>
+      <p className="subtitle">Log in to continue your Himalayan journey.</p>
       {message && <p className="success">{message}</p>}
       <form onSubmit={handleSubmit}>
         <IconInput

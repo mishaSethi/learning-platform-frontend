@@ -6,6 +6,7 @@ import ForgotPassword from './pages/ForgotPassword'
 import ResetPassword from './pages/ResetPassword'
 import VerifyLogin from './pages/VerifyLogin'
 import Dashboard from './pages/Dashboard'
+import AuthLayout from './components/AuthLayout'
 import './App.css'
 
 function App() {
@@ -34,48 +35,48 @@ function App() {
 
   if (page === 'signup') {
     return (
-      <div className="page">
+      <AuthLayout>
         <Signup
           onSuccess={() => { setMessage('Account created! Please log in.'); setPage('login') }}
           onGoToLogin={() => { setMessage(''); setPage('login') }}
         />
-      </div>
+      </AuthLayout>
     )
   }
 
   if (page === 'forgot') {
     return (
-      <div className="page">
+      <AuthLayout>
         <ForgotPassword
           onCodeSent={(email) => { setResetEmail(email); setPage('reset') }}
           onBackToLogin={() => { setMessage(''); setPage('login') }}
         />
-      </div>
+      </AuthLayout>
     )
   }
 
   if (page === 'reset') {
     return (
-      <div className="page">
+      <AuthLayout>
         <ResetPassword
           email={resetEmail}
           onSuccess={() => { setMessage('Password updated! Please log in with your new password.'); setPage('login') }}
           onBackToLogin={() => { setMessage(''); setPage('login') }}
         />
-      </div>
+      </AuthLayout>
     )
   }
 
   if (page === 'verify') {
     return (
-      <div className="page">
+      <AuthLayout>
         <VerifyLogin
           email={loginCreds.email}
           password={loginCreds.password}
           onSuccess={() => { setLoginCreds(null); setPage('dashboard') }}
           onBackToLogin={() => { setLoginCreds(null); setMessage(''); setPage('login') }}
         />
-      </div>
+      </AuthLayout>
     )
   }
 
@@ -85,14 +86,14 @@ function App() {
   }
 
   return (
-    <div className="page">
+    <AuthLayout>
       <Login
         message={message}
         onSuccess={(email, password) => { setLoginCreds({ email, password }); setPage('verify') }}
         onGoToSignup={() => setPage('signup')}
         onForgotPassword={() => { setMessage(''); setPage('forgot') }}
       />
-    </div>
+    </AuthLayout>
   )
 }
 
