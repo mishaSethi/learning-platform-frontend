@@ -13,7 +13,10 @@ async function request(path, options = {}, errorMessages = {}) {
   const response = await fetch(`${API_URL}${path}`, {
     ...options,
     headers: {
-      "Content-Type": "application/json",
+      // Files (FormData) set their own Content-Type; everything else is JSON
+      ...(!(options.body instanceof FormData) && {
+        "Content-Type": "application/json",
+      }),
       ...(token && { Authorization: `Bearer ${token}` }),
     },
   });
@@ -92,4 +95,47 @@ export function getQuizAttempts() {
 
 export function getQuizLeaderboard() {
   return request("/api/quiz/leaderboard");
+}
+
+export function getProfileDetails() {
+  return request("/api/me/details");
+}
+
+// Name and email are never sent - they can't be changed
+export function updateProfileDetails(details) {
+  return request(
+    "/api/me/details",
+    { method: "PUT", body: JSON.stringify(details) },
+    { 400: "Some details aren't valid - please check the highlighted rules and try again." },
+  );
+}
+
+export function uploadAvatar(imageBlob) {
+  const formData = new FormData();
+  formData.append("file", imageBlob, "avatar.jpg");
+  return request(
+    "/api/me/avatar",
+    { method: "PUT", body: formData },
+    {
+      400: "Please choose a JPEG or PNG photo.",
+      413: "That photo is too large (max 2 MB).",
+    },
+  );
+}
+
+export function deleteAvatar() {
+  return request("/api/me/avatar", { method: "DELETE" });
+}
+
+// Photos are images, not JSON, so they are fetched differently.
+// Returns a temporary address an <img> can show, or null if there is no photo.
+export async function getAvatarUrl() {
+  const token = localStorage.getItem("token");
+  const response = await fetch(`${API_URL}/api/me/avatar`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  if (!response.ok) {
+    return null;
+  }
+  return URL.createObjectURL(await response.blob());
 }

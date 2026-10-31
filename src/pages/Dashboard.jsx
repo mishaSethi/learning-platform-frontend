@@ -16,7 +16,8 @@ import {
   FiTrendingUp,
   FiUser,
 } from "react-icons/fi";
-import { getMe } from "../api";
+import { getAvatarUrl, getMe } from "../api";
+import Avatar from "../components/Avatar";
 import {
   CLIMBERS,
   HIGHEST_PEAKS,
@@ -25,6 +26,7 @@ import {
   QUICK_FACTS,
   TREKKING_TIPS,
 } from "../data/mountains";
+import Profile from "./Profile";
 import Quiz from "./Quiz";
 import "./Dashboard.css";
 
@@ -44,12 +46,29 @@ export default function Dashboard({ onLogout }) {
   const [section, setSection] = useState("overview");
   // The card that is open in full, or null to show the card list
   const [detail, setDetail] = useState(null);
+  // Temporary address of the profile photo, or null to show the initial
+  const [avatarUrl, setAvatarUrl] = useState(null);
 
   useEffect(() => {
     getMe()
-      .then(setUser)
+      .then((me) => {
+        setUser(me);
+        if (me.hasAvatar) {
+          getAvatarUrl().then(setAvatarUrl);
+        }
+      })
       .catch(() => onLogout());
   }, [onLogout]);
+
+  // Swap in a new photo address and free the memory of the old one
+  function handleAvatarChange(url) {
+    setAvatarUrl((old) => {
+      if (old) {
+        URL.revokeObjectURL(old);
+      }
+      return url;
+    });
+  }
 
   function openSection(id) {
     setSection(id);
@@ -78,6 +97,18 @@ export default function Dashboard({ onLogout }) {
     <div className="dashboard">
       <aside className="sidebar">
         <div className="sidebar-brand">🏔️ Learning Platform</div>
+
+        <button
+          type="button"
+          className="sidebar-user"
+          onClick={() => openSection("profile")}
+        >
+          <Avatar name={user.name} src={avatarUrl} size={44} />
+          <span className="sidebar-user-text">
+            <strong>{user.name}</strong>
+            <small>View profile</small>
+          </span>
+        </button>
 
         <nav className="sidebar-nav">
           {SECTIONS.map(({ id, label, icon: Icon }) => (
@@ -117,7 +148,14 @@ export default function Dashboard({ onLogout }) {
             {section === "climbers" && <Climbers onOpen={openDetail} />}
             {section === "quiz" && <Quiz />}
             {section === "tips" && <Tips />}
-            {section === "profile" && <Profile user={user} />}
+            {section === "profile" && (
+              <Profile
+                user={user}
+                avatarUrl={avatarUrl}
+                onUserChange={setUser}
+                onAvatarChange={handleAvatarChange}
+              />
+            )}
           </>
         )}
       </main>
@@ -436,25 +474,6 @@ function Tips() {
             </ul>
           </article>
         ))}
-      </div>
-    </>
-  );
-}
-
-function Profile({ user }) {
-  return (
-    <>
-      <h1 className="page-title">My Profile</h1>
-      <div className="profile-card">
-        <div className="avatar">{user.name.charAt(0).toUpperCase()}</div>
-        <dl>
-          <dt>Name</dt>
-          <dd>{user.name}</dd>
-          <dt>Email</dt>
-          <dd>{user.email}</dd>
-          <dt>Phone</dt>
-          <dd>{user.phone || "Not added"}</dd>
-        </dl>
       </div>
     </>
   );
